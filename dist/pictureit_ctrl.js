@@ -81,8 +81,6 @@ System.register(['lodash', 'app/plugins/sdk', './sprintf.js', './angular-sprintf
                     var _this = _possibleConstructorReturn(this, (PictureItCtrl.__proto__ || Object.getPrototypeOf(PictureItCtrl)).call(this, $scope, $injector));
 
                     _.defaults(_this.panel, panelDefaults);
-
-                    _this.unitFormats = kbn.getUnitFormats();
                     var bindThis = _this;
                     _this.events.on('init-edit-mode', _this.onInitEditMode.bind(_this));
                     _this.events.on('panel-initialized', _this.render.bind(_this));
