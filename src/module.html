@@ -9,7 +9,7 @@
                                 'background-color': sensor.bgcolor,
                                 'border-style':'solid','border-color':sensor.bordercolor,'border-width':'1px',padding:'5px'}">
                     <span style="color: {{sensor.color}}">{{sensor.label}}</span>
-                    <a href="{{sensor.link_url}}" bs-tooltip="sensor.link_hover" style="color: {{sensor.color}}">
+                    <a href="{{sensor.link_url.length > 0 ? sensor.link_url : '#'}}" bs-tooltip="sensor.link_hover" style="color: {{sensor.color}}">
                         {{sensor.valueFormatted}} {{sensor.valueUnit}}
                     </a>
                 </div>

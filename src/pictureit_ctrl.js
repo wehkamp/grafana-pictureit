@@ -19,8 +19,6 @@ export class PictureItCtrl extends MetricsPanelCtrl {
     constructor($scope, $injector) {
         super($scope, $injector);
         _.defaults(this.panel, panelDefaults);
-
-        this.unitFormats = kbn.getUnitFormats();
         var bindThis = this;
         this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
         this.events.on('panel-initialized', this.render.bind(this));

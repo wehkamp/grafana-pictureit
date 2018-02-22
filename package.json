@@ -7,6 +7,9 @@
     "lint": "eslint --color .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "pre-commit": [
+    "grunt"
+  ],
   "keywords": [
     "picture",
     "grafana",
