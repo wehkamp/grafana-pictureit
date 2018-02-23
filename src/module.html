@@ -5,11 +5,10 @@
             <div ng-style="{position: 'absolute', height: sensor.lastSize*2, left:sensor.xlocationStr, top:sensor.ylocationStr, overflow:hidden, 'font-size':sensor.sizeStr,color:sensor.color}">
                 <div ng-style="{position: 'absolute',
                                 top: 0,
-                                'white-space':'no-wrap',
                                 left: 0,
                                 overflow:hidden,
                                 'background-color': sensor.bgcolor,
-                                'border-style':'solid','border-color':sensor.bordercolor,'border-width':'1px',padding:'5px'}">
+                                'border-style':'solid','border-color':sensor.bordercolor,'border-width':'1px',padding:'5px'}" style="white-space: nowrap">
                     <span style="color: {{sensor.color}}">{{sensor.label}}</span>
                     <a href="{{sensor.link_url.length > 0 ? sensor.link_url : '#'}}" bs-tooltip="sensor.link_hover" style="color: {{sensor.color}}">
                         {{sensor.valueFormatted}} {{sensor.valueUnit}}
