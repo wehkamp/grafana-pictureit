@@ -1,11 +1,11 @@
-    <img ng-src="{{ctrl.panel.bgimage}}" id="imageRef" style="width:100%; visibility: hidden; position:absolute"/>
-<div ng-style="{height:ctrl.panel.height,width:'100%','background-repeat':'no-repeat','background-image':'url('+ctrl.panel.bgimage+')', 'background-size':'contain', overflow:hidden}">
+<div ng-style="{height:ctrl.panel.height,width:'100%','background-repeat':'no-repeat','background-image':'url('+ctrl.panel.bgimage+')', 'background-size':'contain', 'overflow':'hidden'}">
+<img ng-src="{{ctrl.panel.bgimage}}" id="imageRef" style="visibility: hidden; position:absolute;" height="{{ctrl.panel.height}}"/>
     <div style="height:{{ctrl.panel.height}};overflow:hidden" ng-repeat="sensor in ctrl.panel.sensors">
         <div ng-if="sensor.visible" style="height:{{ctrl.panel.height}};overflow:hidden" >
             <div ng-style="{position: 'absolute', height: sensor.lastSize*2, left:sensor.xlocationStr, top:sensor.ylocationStr, overflow:hidden, 'font-size':sensor.sizeStr,color:sensor.color}">
                 <div ng-style="{position: 'absolute',
                                 top: 0,
-                                white-space:'no-wrap',
+                                'white-space':'no-wrap',
                                 left: 0,
                                 overflow:hidden,
                                 'background-color': sensor.bgcolor,

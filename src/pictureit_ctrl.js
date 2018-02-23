@@ -4,6 +4,8 @@ import './sprintf.js';
 import './angular-sprintf.js';
 import kbn from 'app/core/utils/kbn';
 
+import { Emitter } from 'app/core/core';
+
 const panelDefaults = {
     valueMaps: [],
     seriesList: [],
@@ -24,12 +26,11 @@ export class PictureItCtrl extends MetricsPanelCtrl {
         this.events.on('panel-initialized', this.render.bind(this));
         this.events.on('data-received', this.onDataReceived.bind(this));
         this.events.on('data-snapshot-load', this.onDataReceived.bind(this));
-
-        var img = new Image();
-        img.addEventListener("load", function () {
+        this.hiddenImg = new Image();
+        this.hiddenImg.addEventListener("load", function () {
             bindThis.refImageSize= {w: this.naturalWidth, h:this.naturalHeight}
         });
-        img.src = this.panel.bgimage;
+        this.hiddenImg.src = this.panel.bgimage;
     }
 
     onDataReceived(dataList) {
@@ -89,6 +90,11 @@ export class PictureItCtrl extends MetricsPanelCtrl {
 
     onInitEditMode() {
         this.addEditorTab('Options', 'public/plugins/bessler-pictureit-panel/editor.html', 2);
+        var bindThis = this;
+        this.editModeInterval = true;
+        this.refresher = setInterval(function() {
+            bindThis.events.emit('panel-initialized');
+        }, 1000);
     }
 
     link(scope, elem, attrs, ctrl) {
@@ -105,7 +111,15 @@ export class PictureItCtrl extends MetricsPanelCtrl {
             if (!ctrl.panel.sensors) {
                 return;
             }
-
+            if (ctrl.editMode && !ctrl.editModeInterval) {
+                ctrl.editModeInterval = true;
+                ctrl.refresher = setInterval(function() {
+                    ctrl.events.emit('panel-initialized');
+                }, 1000);
+            } else if (!ctrl.editMode) {
+                ctrl.editModeInterval = false;
+                clearInterval(ctrl.refresher);
+            }
             var refImage = document.getElementById('imageRef');
             if(!refImage){
                 return;
@@ -124,7 +138,6 @@ export class PictureItCtrl extends MetricsPanelCtrl {
             var imageWidth = refImage.clientWidth;
             var originalHeight = ctrl.refImageSize.h;
             var originalWidth = ctrl.refImageSize.w;
-
             for (var sensor = 0; sensor < sensorsLength; sensor++) {
                 sensors[sensor].visible = sensors[sensor].xlocation < width && sensors[sensor].ylocation < height;
                 var calculatedYPos = imageHeight * sensors[sensor].ylocation / originalHeight;

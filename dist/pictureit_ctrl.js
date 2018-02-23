@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['lodash', 'app/plugins/sdk', './sprintf.js', './angular-sprintf.js', 'app/core/utils/kbn'], function (_export, _context) {
+System.register(['lodash', 'app/plugins/sdk', './sprintf.js', './angular-sprintf.js', 'app/core/utils/kbn', 'app/core/core'], function (_export, _context) {
     "use strict";
 
-    var _, MetricsPanelCtrl, kbn, _createClass, panelDefaults, PictureItCtrl;
+    var _, MetricsPanelCtrl, kbn, Emitter, _createClass, panelDefaults, PictureItCtrl;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -42,6 +42,8 @@ System.register(['lodash', 'app/plugins/sdk', './sprintf.js', './angular-sprintf
             MetricsPanelCtrl = _appPluginsSdk.MetricsPanelCtrl;
         }, function (_sprintfJs) {}, function (_angularSprintfJs) {}, function (_appCoreUtilsKbn) {
             kbn = _appCoreUtilsKbn.default;
+        }, function (_appCoreCore) {
+            Emitter = _appCoreCore.Emitter;
         }],
         execute: function () {
             _createClass = function () {
@@ -86,12 +88,11 @@ System.register(['lodash', 'app/plugins/sdk', './sprintf.js', './angular-sprintf
                     _this.events.on('panel-initialized', _this.render.bind(_this));
                     _this.events.on('data-received', _this.onDataReceived.bind(_this));
                     _this.events.on('data-snapshot-load', _this.onDataReceived.bind(_this));
-
-                    var img = new Image();
-                    img.addEventListener("load", function () {
+                    _this.hiddenImg = new Image();
+                    _this.hiddenImg.addEventListener("load", function () {
                         bindThis.refImageSize = { w: this.naturalWidth, h: this.naturalHeight };
                     });
-                    img.src = _this.panel.bgimage;
+                    _this.hiddenImg.src = _this.panel.bgimage;
                     return _this;
                 }
 
@@ -156,6 +157,11 @@ System.register(['lodash', 'app/plugins/sdk', './sprintf.js', './angular-sprintf
                     key: 'onInitEditMode',
                     value: function onInitEditMode() {
                         this.addEditorTab('Options', 'public/plugins/bessler-pictureit-panel/editor.html', 2);
+                        var bindThis = this;
+                        this.editModeInterval = true;
+                        this.refresher = setInterval(function () {
+                            bindThis.events.emit('panel-initialized');
+                        }, 1000);
                     }
                 }, {
                     key: 'link',
@@ -173,7 +179,15 @@ System.register(['lodash', 'app/plugins/sdk', './sprintf.js', './angular-sprintf
                             if (!ctrl.panel.sensors) {
                                 return;
                             }
-
+                            if (ctrl.editMode && !ctrl.editModeInterval) {
+                                ctrl.editModeInterval = true;
+                                ctrl.refresher = setInterval(function () {
+                                    ctrl.events.emit('panel-initialized');
+                                }, 1000);
+                            } else if (!ctrl.editMode) {
+                                ctrl.editModeInterval = false;
+                                clearInterval(ctrl.refresher);
+                            }
                             var refImage = document.getElementById('imageRef');
                             if (!refImage) {
                                 return;
@@ -192,7 +206,6 @@ System.register(['lodash', 'app/plugins/sdk', './sprintf.js', './angular-sprintf
                             var imageWidth = refImage.clientWidth;
                             var originalHeight = ctrl.refImageSize.h;
                             var originalWidth = ctrl.refImageSize.w;
-
                             for (var sensor = 0; sensor < sensorsLength; sensor++) {
                                 sensors[sensor].visible = sensors[sensor].xlocation < width && sensors[sensor].ylocation < height;
                                 var calculatedYPos = imageHeight * sensors[sensor].ylocation / originalHeight;
