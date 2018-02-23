@@ -60,6 +60,7 @@ export class PictureItCtrl extends MetricsPanelCtrl {
                 bgcolor: 'rgba(0, 0, 0, 0.58)',
                 color: '#FFFFFF',
                 size: 22,
+                currentSize: 22,
                 bordercolor: 'rgb(251, 4, 4)',
                 visible: true
             });
@@ -75,6 +76,7 @@ export class PictureItCtrl extends MetricsPanelCtrl {
                 bgcolor: lastSensor.bgcolor,
                 color: lastSensor.color,
                 size: lastSensor.size,
+                currentSize: lastSensor.size,
                 bordercolor: lastSensor.bordercolor,
                 visible: true
             });
@@ -129,6 +131,7 @@ export class PictureItCtrl extends MetricsPanelCtrl {
                 var calculatedXPos = imageWidth * sensors[sensor].xlocation / originalWidth;
                 sensors[sensor].ylocationStr = (calculatedYPos).toString() + "px";
                 sensors[sensor].xlocationStr = (calculatedXPos).toString() + "px";
+                sensors[sensor].lastSize = imageWidth * sensors[sensor].size / originalWidth;
                 sensors[sensor].sizeStr = imageWidth * sensors[sensor].size / originalWidth + "px";
                 for (var valueMap = 0; valueMap < valueMapsLength; valueMap++) {
                     if (sensors[sensor].name == valueMaps[valueMap].name) {
