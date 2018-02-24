@@ -179,6 +179,7 @@ System.register(['lodash', 'app/plugins/sdk', './sprintf.js', './angular-sprintf
                             if (!ctrl.panel.sensors) {
                                 return;
                             }
+                            console.log(scope);
                             if (ctrl.editMode && !ctrl.editModeInterval) {
                                 ctrl.editModeInterval = true;
                                 ctrl.refresher = setInterval(function () {
@@ -195,6 +196,13 @@ System.register(['lodash', 'app/plugins/sdk', './sprintf.js', './angular-sprintf
                             if (refImage.clientHeight > refImage.clientWidth) {
                                 refImage.style = "width: auto; visibility: hidden; position: absolute";
                             }
+
+                            var span = ctrl.panel.span;
+                            var spanRatio = span / 12;
+                            //refImage.style='height:auto; width:'+100 * spanRatio+'%';
+                            refImage.style = 'width:100%';
+                            console.log(refImage.clientHeight);
+                            ctrl.panel.height = refImage.clientHeight;
                             var width = pixelStrToNum($panelContainer.css("width"));
                             var height = pixelStrToNum($panelContainer.css("height"));
 

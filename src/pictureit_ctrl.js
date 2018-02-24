@@ -28,7 +28,7 @@ export class PictureItCtrl extends MetricsPanelCtrl {
         this.events.on('data-snapshot-load', this.onDataReceived.bind(this));
         this.hiddenImg = new Image();
         this.hiddenImg.addEventListener("load", function () {
-            bindThis.refImageSize= {w: this.naturalWidth, h:this.naturalHeight}
+            bindThis.refImageSize = { w: this.naturalWidth, h: this.naturalHeight }
         });
         this.hiddenImg.src = this.panel.bgimage;
     }
@@ -92,7 +92,7 @@ export class PictureItCtrl extends MetricsPanelCtrl {
         this.addEditorTab('Options', 'public/plugins/bessler-pictureit-panel/editor.html', 2);
         var bindThis = this;
         this.editModeInterval = true;
-        this.refresher = setInterval(function() {
+        this.refresher = setInterval(function () {
             bindThis.events.emit('panel-initialized');
         }, 1000);
     }
@@ -113,7 +113,7 @@ export class PictureItCtrl extends MetricsPanelCtrl {
             }
             if (ctrl.editMode && !ctrl.editModeInterval) {
                 ctrl.editModeInterval = true;
-                ctrl.refresher = setInterval(function() {
+                ctrl.refresher = setInterval(function () {
                     ctrl.events.emit('panel-initialized');
                 }, 1000);
             } else if (!ctrl.editMode) {
@@ -121,12 +121,15 @@ export class PictureItCtrl extends MetricsPanelCtrl {
                 clearInterval(ctrl.refresher);
             }
             var refImage = document.getElementById('imageRef');
-            if(!refImage){
+            if (!refImage) {
                 return;
             }
-                if(refImage.clientHeight > refImage.clientWidth){
-                    refImage.style = "width: auto; visibility: hidden; position: absolute";
-                }
+            if (refImage.clientHeight > refImage.clientWidth) {
+                refImage.style = "width: auto; visibility: hidden; position: absolute";
+            }
+            refImage.style='width:100%';
+            console.log(refImage.clientHeight);
+            ctrl.panel.height = refImage.clientHeight;
             var width = pixelStrToNum($panelContainer.css("width"));
             var height = pixelStrToNum($panelContainer.css("height"));
 
