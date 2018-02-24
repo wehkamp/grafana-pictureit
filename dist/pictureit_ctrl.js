@@ -92,6 +92,7 @@ System.register(['lodash', 'app/plugins/sdk', './sprintf.js', './angular-sprintf
                     _this.hiddenImg.addEventListener("load", function () {
                         bindThis.refImageSize = { w: this.naturalWidth, h: this.naturalHeight };
                     });
+                    _this.refId = $scope['$id'];
                     _this.hiddenImg.src = _this.panel.bgimage;
                     return _this;
                 }
@@ -157,11 +158,6 @@ System.register(['lodash', 'app/plugins/sdk', './sprintf.js', './angular-sprintf
                     key: 'onInitEditMode',
                     value: function onInitEditMode() {
                         this.addEditorTab('Options', 'public/plugins/bessler-pictureit-panel/editor.html', 2);
-                        var bindThis = this;
-                        this.editModeInterval = true;
-                        this.refresher = setInterval(function () {
-                            bindThis.events.emit('panel-initialized');
-                        }, 1000);
                     }
                 }, {
                     key: 'link',
@@ -179,17 +175,7 @@ System.register(['lodash', 'app/plugins/sdk', './sprintf.js', './angular-sprintf
                             if (!ctrl.panel.sensors) {
                                 return;
                             }
-                            console.log(scope);
-                            if (ctrl.editMode && !ctrl.editModeInterval) {
-                                ctrl.editModeInterval = true;
-                                ctrl.refresher = setInterval(function () {
-                                    ctrl.events.emit('panel-initialized');
-                                }, 1000);
-                            } else if (!ctrl.editMode) {
-                                ctrl.editModeInterval = false;
-                                clearInterval(ctrl.refresher);
-                            }
-                            var refImage = document.getElementById('imageRef');
+                            var refImage = document.getElementById('pictureit-' + ctrl.refId);
                             if (!refImage) {
                                 return;
                             }
@@ -197,15 +183,9 @@ System.register(['lodash', 'app/plugins/sdk', './sprintf.js', './angular-sprintf
                                 refImage.style = "width: auto; visibility: hidden; position: absolute";
                             }
 
-                            var span = ctrl.panel.span;
-                            var spanRatio = span / 12;
-                            //refImage.style='height:auto; width:'+100 * spanRatio+'%';
                             refImage.style = 'width:100%';
-                            console.log(refImage.clientHeight);
-                            ctrl.panel.height = refImage.clientHeight;
                             var width = pixelStrToNum($panelContainer.css("width"));
                             var height = pixelStrToNum($panelContainer.css("height"));
-
                             sensors = ctrl.panel.sensors;
                             valueMaps = ctrl.panel.valueMaps;
                             var sensorsLength = sensors.length;
@@ -214,10 +194,16 @@ System.register(['lodash', 'app/plugins/sdk', './sprintf.js', './angular-sprintf
                             var imageWidth = refImage.clientWidth;
                             var originalHeight = ctrl.refImageSize.h;
                             var originalWidth = ctrl.refImageSize.w;
+                            var spanRatio = 1 - ctrl.panel.span / 12;
+
+                            ctrl.panel.height = imageHeight;
+                            if ($panelContainer.length > 0) {
+                                $panelContainer[0].style = 'min-height: auto';
+                            }
                             for (var sensor = 0; sensor < sensorsLength; sensor++) {
                                 sensors[sensor].visible = sensors[sensor].xlocation < width && sensors[sensor].ylocation < height;
-                                var calculatedYPos = imageHeight * sensors[sensor].ylocation / originalHeight;
-                                var calculatedXPos = imageWidth * sensors[sensor].xlocation / originalWidth;
+                                var calculatedYPos = imageHeight * sensors[sensor].ylocation / originalHeight + Math.pow(2, spanRatio * 5);
+                                var calculatedXPos = imageWidth * sensors[sensor].xlocation / originalWidth + Math.pow(2, spanRatio * 2);
                                 sensors[sensor].ylocationStr = calculatedYPos.toString() + "px";
                                 sensors[sensor].xlocationStr = calculatedXPos.toString() + "px";
                                 sensors[sensor].lastSize = imageWidth * sensors[sensor].size / originalWidth;

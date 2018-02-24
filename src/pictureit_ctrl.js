@@ -30,6 +30,7 @@ export class PictureItCtrl extends MetricsPanelCtrl {
         this.hiddenImg.addEventListener("load", function () {
             bindThis.refImageSize = { w: this.naturalWidth, h: this.naturalHeight }
         });
+        this.refId=$scope['$id'];
         this.hiddenImg.src = this.panel.bgimage;
     }
 
@@ -120,19 +121,17 @@ export class PictureItCtrl extends MetricsPanelCtrl {
                 ctrl.editModeInterval = false;
                 clearInterval(ctrl.refresher);
             }
-            var refImage = document.getElementById('imageRef');
+            var refImage = document.getElementById('pictureit-'+ctrl.refId);
             if (!refImage) {
                 return;
             }
             if (refImage.clientHeight > refImage.clientWidth) {
                 refImage.style = "width: auto; visibility: hidden; position: absolute";
             }
-            refImage.style='width:100%';
-            console.log(refImage.clientHeight);
-            ctrl.panel.height = refImage.clientHeight;
+
+            refImage.style = 'width:100%';
             var width = pixelStrToNum($panelContainer.css("width"));
             var height = pixelStrToNum($panelContainer.css("height"));
-
             sensors = ctrl.panel.sensors;
             valueMaps = ctrl.panel.valueMaps;
             var sensorsLength = sensors.length;
@@ -141,12 +140,18 @@ export class PictureItCtrl extends MetricsPanelCtrl {
             var imageWidth = refImage.clientWidth;
             var originalHeight = ctrl.refImageSize.h;
             var originalWidth = ctrl.refImageSize.w;
+            var spanRatio = 1 - (ctrl.panel.span / 12);
+
+            ctrl.panel.height = imageHeight;
+            if($panelContainer.length > 0){
+                $panelContainer[0].style='min-height: auto';
+            }
             for (var sensor = 0; sensor < sensorsLength; sensor++) {
                 sensors[sensor].visible = sensors[sensor].xlocation < width && sensors[sensor].ylocation < height;
-                var calculatedYPos = imageHeight * sensors[sensor].ylocation / originalHeight;
-                var calculatedXPos = imageWidth * sensors[sensor].xlocation / originalWidth;
-                sensors[sensor].ylocationStr = (calculatedYPos).toString() + "px";
-                sensors[sensor].xlocationStr = (calculatedXPos).toString() + "px";
+                var calculatedYPos = (imageHeight * sensors[sensor].ylocation / originalHeight) + Math.pow((2), spanRatio * 5);
+                var calculatedXPos = (imageWidth * sensors[sensor].xlocation / originalWidth)  + Math.pow((2), spanRatio * 2);
+                sensors[sensor].ylocationStr = calculatedYPos.toString() + "px";
+                sensors[sensor].xlocationStr = calculatedXPos.toString() + "px";
                 sensors[sensor].lastSize = imageWidth * sensors[sensor].size / originalWidth;
                 sensors[sensor].sizeStr = imageWidth * sensors[sensor].size / originalWidth + "px";
                 for (var valueMap = 0; valueMap < valueMapsLength; valueMap++) {
@@ -156,7 +161,6 @@ export class PictureItCtrl extends MetricsPanelCtrl {
                     }
                 }
             }
-
         }
 
         this.events.on('render', function () {
